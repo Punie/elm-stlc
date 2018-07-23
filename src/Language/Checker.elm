@@ -22,8 +22,8 @@ type TypeError
     | NotInScope Name
 
 
-showTypeError : TypeError -> String
-showTypeError te =
+toString : TypeError -> String
+toString te =
     case te of
         Mismatch t1 t2 ->
             "Couldn't match expected type '" ++ prettyType t2 ++ "' with actual type: '" ++ prettyType t1 ++ "'"

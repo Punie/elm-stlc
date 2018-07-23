@@ -5,7 +5,6 @@ import Parser exposing (..)
 import Parser.Extras exposing (..)
 import Set
 import Tuple
-import Utils
 
 
 identifier : Parser Name
@@ -91,8 +90,12 @@ aexp =
 
 term : Parser Expr
 term =
-    succeed (Utils.foldl1 App)
-        |= some (lazy <| \_ -> aexp)
+    let
+        foldl1 f ( x, xs ) =
+            List.foldl f x xs
+    in
+        succeed (foldl1 App)
+            |= some (lazy <| \_ -> aexp)
 
 
 opParser : String -> BinOp -> Parser (Expr -> Expr -> Expr)

@@ -176,9 +176,9 @@ many p =
     loop [] (manyHelp p)
 
 
-some : Parser a -> Parser (List a)
+some : Parser a -> Parser ( a, List a )
 some p =
-    succeed (::)
+    succeed Tuple.pair
         |= p
         |. spaces
         |= many p

@@ -11,8 +11,8 @@ type Value
     | VClosure Name Expr Scope
 
 
-show : Value -> String
-show val =
+toString : Value -> String
+toString val =
     case val of
         VInt x ->
             String.fromInt x ++ " : Int"
