@@ -15,20 +15,20 @@ toString : Value -> String
 toString val =
     case val of
         VInt x ->
-            String.fromInt x ++ " : Int"
+            String.fromInt x
 
         VBool True ->
-            "True : Bool"
+            "True"
 
         VBool False ->
-            "False : Bool"
+            "False"
 
         VClosure name _ _ ->
             "<<closure>>"
 
 
-type Evaluate t
-    = Identity t
+type alias Evaluate value =
+    Result String value
 
 
 type alias Scope =
@@ -39,34 +39,34 @@ eval : Scope -> Expr -> Evaluate Value
 eval env expr =
     case expr of
         Lit (LInt x) ->
-            Identity <| VInt x
+            Ok <| VInt x
 
         Lit (LBool x) ->
-            Identity <| VBool x
+            Ok <| VBool x
 
         Var x ->
-            Identity <|
-                case Dict.get x env of
-                    Just val ->
-                        val
+            case Dict.get x env of
+                Just val ->
+                    Ok val
 
-                    Nothing ->
-                        Debug.todo ""
+                Nothing ->
+                    Err ""
 
         Prim op a b ->
             let
                 x =
-                    extract env a
+                    eval env a
 
                 y =
-                    extract env b
+                    eval env b
             in
-                primOp op x y
+                Result.map2 (primOp op) x y
+                    |> resultJoin
 
         If p a b ->
             let
                 pred =
-                    extract env p
+                    eval env p
 
                 x =
                     eval env a
@@ -77,24 +77,26 @@ eval env expr =
                 ifthenelse pred x y
 
         Lam x _ body ->
-            Identity <| VClosure x body env
+            Ok <| VClosure x body env
 
         App a b ->
             let
                 x =
-                    extract env a
+                    eval env a
 
                 y =
-                    extract env b
+                    eval env b
             in
-                apply x y
+                Result.map2 apply x y
+                    |> resultJoin
 
 
-extract : Scope -> Expr -> Value
-extract env x =
-    case eval env x of
-        Identity val ->
-            val
+
+-- extract : Scope -> Expr -> Value
+-- extract env x =
+--     case eval env x of
+--         Identity val ->
+--             val
 
 
 primOp : BinOp -> Value -> Value -> Evaluate Value
@@ -103,61 +105,61 @@ primOp op a b =
         Add ->
             case ( a, b ) of
                 ( VInt x, VInt y ) ->
-                    Identity <| VInt (x + y)
+                    Ok <| VInt (x + y)
 
                 _ ->
-                    Debug.todo ""
+                    Err ""
 
         Mul ->
             case ( a, b ) of
                 ( VInt x, VInt y ) ->
-                    Identity <| VInt (x * y)
+                    Ok <| VInt (x * y)
 
                 _ ->
-                    Debug.todo ""
+                    Err ""
 
         And ->
             case ( a, b ) of
                 ( VBool x, VBool y ) ->
-                    Identity <| VBool (x && y)
+                    Ok <| VBool (x && y)
 
                 _ ->
-                    Debug.todo ""
+                    Err ""
 
         Or ->
             case ( a, b ) of
                 ( VBool x, VBool y ) ->
-                    Identity <| VBool (x || y)
+                    Ok <| VBool (x || y)
 
                 _ ->
-                    Debug.todo ""
+                    Err ""
 
         Lower ->
             case ( a, b ) of
                 ( VInt x, VInt y ) ->
-                    Identity <| VBool (x < y)
+                    Ok <| VBool (x < y)
 
                 _ ->
-                    Debug.todo ""
+                    Err ""
 
         Greater ->
             case ( a, b ) of
                 ( VInt x, VInt y ) ->
-                    Identity <| VBool (x > y)
+                    Ok <| VBool (x > y)
 
                 _ ->
-                    Debug.todo ""
+                    Err ""
 
         Eq ->
             case ( a, b ) of
                 ( VInt x, VInt y ) ->
-                    Identity <| VBool (x == y)
+                    Ok <| VBool (x == y)
 
                 ( VBool x, VBool y ) ->
-                    Identity <| VBool (x == y)
+                    Ok <| VBool (x == y)
 
                 _ ->
-                    Debug.todo ""
+                    Err ""
 
 
 
@@ -165,17 +167,17 @@ primOp op a b =
 --     Debug.todo ""
 
 
-ifthenelse : Value -> Evaluate Value -> Evaluate Value -> Evaluate Value
+ifthenelse : Evaluate Value -> Evaluate Value -> Evaluate Value -> Evaluate Value
 ifthenelse p a b =
     case p of
-        VBool True ->
+        Ok (VBool True) ->
             a
 
-        VBool False ->
+        Ok (VBool False) ->
             b
 
         _ ->
-            Debug.todo ""
+            Err ""
 
 
 extend : Scope -> Name -> Value -> Scope
@@ -190,7 +192,7 @@ apply v1 v2 =
             eval (extend env name v1) body
 
         _ ->
-            Debug.todo ""
+            Err ""
 
 
 emptyScope : Scope
@@ -198,6 +200,19 @@ emptyScope =
     Dict.empty
 
 
-runEval : Expr -> Value
+runEval : Expr -> Evaluate Value
 runEval =
-    extract emptyScope
+    eval emptyScope
+
+
+resultJoin : Result err (Result err value) -> Result err value
+resultJoin result =
+    case result of
+        Err err ->
+            Err err
+
+        Ok (Err err) ->
+            Err err
+
+        Ok (Ok res) ->
+            Ok res

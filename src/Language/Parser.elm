@@ -169,3 +169,62 @@ type_ =
 parseExpr : String -> Result (List DeadEnd) Expr
 parseExpr =
     run (contents expr)
+
+
+deadEndsToString : List DeadEnd -> String
+deadEndsToString deadends =
+    let
+        strings =
+            List.map deadEndToString deadends
+    in
+        String.join "\n" strings
+
+
+deadEndToString : DeadEnd -> String
+deadEndToString { row, col, problem } =
+    let
+        addRowCol str =
+            str ++ " (" ++ String.fromInt row ++ ":" ++ String.fromInt col ++ ")."
+    in
+        case problem of
+            Expecting str ->
+                addRowCol ("I expected the following string: `" ++ str ++ "`")
+
+            ExpectingInt ->
+                addRowCol "I expected an integer"
+
+            ExpectingHex ->
+                addRowCol "I expected an hexadecimal string"
+
+            ExpectingOctal ->
+                addRowCol "I expected an octal string"
+
+            ExpectingBinary ->
+                addRowCol "I expected a binary string"
+
+            ExpectingFloat ->
+                addRowCol "I expected a float"
+
+            ExpectingNumber ->
+                addRowCol "I expected a number"
+
+            ExpectingVariable ->
+                addRowCol "I expected a variable name"
+
+            ExpectingSymbol str ->
+                addRowCol ("I expected the following symbol: `" ++ str ++ "`")
+
+            ExpectingKeyword str ->
+                addRowCol ("I expected the following keyword: `" ++ str ++ "`")
+
+            ExpectingEnd ->
+                addRowCol "I reached an unexpected end of input"
+
+            UnexpectedChar ->
+                addRowCol "I reached an unexpected character"
+
+            Problem str ->
+                addRowCol ("I encountered the following problem: " ++ str)
+
+            BadRepeat ->
+                addRowCol "This is a bad repeat"
