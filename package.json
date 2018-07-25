@@ -1,0 +1,15 @@
+{
+  "name": "elm-stlc",
+  "version": "1.0.0",
+  "repository": "git@github.com:Punie/elm-stlc.git",
+  "author": "Hugo Saracino <hugo.saracino@gmail.com>",
+  "license": "BSD-3-Clause",
+  "scripts": {
+    "stlc": "node ./dist/app.js",
+    "build": "./elm make src/Main.elm --output=dist/stlc.js --optimize",
+    "debug": "./elm make src/Main.elm --output=dist/stlc.js"
+  },
+  "dependencies": {
+    "yargs": "^12.0.1"
+  }
+}

@@ -2,28 +2,30 @@
 
 ## Build
 
-Just execute the following
-
 ```bash
-$ ./elm make
+$ npm install
 ```
 
 ```bash
-$ ./elm repl
+$ npm run build
 ```
 
-and in the REPL
+## Usage
 
-```elm
-import Run exposing (run)
+Evaluate a simple expression right away.
 
-run "(\\x : Int -> x) 5"
+```bash
+$ npm run --silent run "(\x : Int . x) 42"
+42 : Int
 ```
 
-should yield
+Or fire up the repl altogether and start playing with the language.
 
-```
-"5 : Int"
+```bash
+$ npm run --silent repl
+λ> (\x : Int . x) 42
+42 : Int
+λ> .exit
 ```
 
 ## Syntax
