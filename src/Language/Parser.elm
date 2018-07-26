@@ -3,6 +3,7 @@ module Language.Parser exposing (..)
 import Language.Syntax exposing (..)
 import Parser exposing (..)
 import Parser.Extras exposing (..)
+import Parser.Expression exposing (..)
 import Set
 import Tuple
 

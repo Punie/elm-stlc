@@ -14,7 +14,7 @@ main =
 
 
 type alias Model =
-    String
+    ()
 
 
 type Msg
@@ -27,7 +27,7 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( "", Cmd.none )
+    ( (), Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -38,7 +38,7 @@ update msg model =
                 result =
                     run str
             in
-                ( result, sendOutput result )
+                ( model, sendOutput result )
 
 
 subscriptions : Model -> Sub Msg
