@@ -1,4 +1,4 @@
-module Utils exposing (flip, lookup)
+module Utils exposing (flip, lookup, joinResults)
 
 
 flip : (a -> b -> c) -> b -> a -> c
@@ -17,3 +17,16 @@ lookup key list =
                 Just v
             else
                 lookup key xs
+
+
+joinResults : Result err (Result err value) -> Result err value
+joinResults result =
+    case result of
+        Err err ->
+            Err err
+
+        Ok (Err err) ->
+            Err err
+
+        Ok (Ok res) ->
+            Ok res

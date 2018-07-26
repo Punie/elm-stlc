@@ -3575,7 +3575,7 @@ var author$project$Language$Eval$primOp = F3(
 				return elm$core$Result$Err('');
 		}
 	});
-var author$project$Language$Eval$resultJoin = function (result) {
+var author$project$Utils$joinResults = function (result) {
 	if (result.$ === 1) {
 		var err = result.a;
 		return elm$core$Result$Err(err);
@@ -3679,7 +3679,7 @@ var author$project$Language$Eval$eval = F2(
 				var b = expr.c;
 				var y = A2(author$project$Language$Eval$eval, env, b);
 				var x = A2(author$project$Language$Eval$eval, env, a);
-				return author$project$Language$Eval$resultJoin(
+				return author$project$Utils$joinResults(
 					A3(
 						elm$core$Result$map2,
 						author$project$Language$Eval$primOp(op),
@@ -3703,7 +3703,7 @@ var author$project$Language$Eval$eval = F2(
 				var b = expr.b;
 				var y = A2(author$project$Language$Eval$eval, env, b);
 				var x = A2(author$project$Language$Eval$eval, env, a);
-				return author$project$Language$Eval$resultJoin(
+				return author$project$Utils$joinResults(
 					A3(elm$core$Result$map2, author$project$Language$Eval$apply, x, y));
 		}
 	});

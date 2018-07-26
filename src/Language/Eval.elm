@@ -3,6 +3,7 @@ module Language.Eval exposing (..)
 import Dict exposing (Dict)
 import Language.Pretty exposing (prettyType)
 import Language.Syntax exposing (..)
+import Utils
 
 
 type Value
@@ -61,7 +62,7 @@ eval env expr =
                     eval env b
             in
                 Result.map2 (primOp op) x y
-                    |> resultJoin
+                    |> Utils.joinResults
 
         If p a b ->
             let
@@ -88,15 +89,7 @@ eval env expr =
                     eval env b
             in
                 Result.map2 apply x y
-                    |> resultJoin
-
-
-
--- extract : Scope -> Expr -> Value
--- extract env x =
---     case eval env x of
---         Identity val ->
---             val
+                    |> Utils.joinResults
 
 
 primOp : BinOp -> Value -> Value -> Evaluate Value
@@ -162,11 +155,6 @@ primOp op a b =
                     Err ""
 
 
-
--- _ ->
---     Debug.todo ""
-
-
 ifthenelse : Evaluate Value -> Evaluate Value -> Evaluate Value -> Evaluate Value
 ifthenelse p a b =
     case p of
@@ -203,16 +191,3 @@ emptyScope =
 runEval : Expr -> Evaluate Value
 runEval =
     eval emptyScope
-
-
-resultJoin : Result err (Result err value) -> Result err value
-resultJoin result =
-    case result of
-        Err err ->
-            Err err
-
-        Ok (Err err) ->
-            Err err
-
-        Ok (Ok res) ->
-            Ok res
