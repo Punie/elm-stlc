@@ -10,6 +10,8 @@ $ npm install
 $ npm run build
 ```
 
+:warning: This project uses Elm 0.19. The `elm` binary included here is specific to MacOS. If you wish to compile this project on Windows or GNU/Linux, you will have to download the apropriate binary from [here](https://gist.github.com/evancz/8e89512dfa9f68903f05f1ac4c44861b#binaries).
+
 ## Usage
 
 Evaluate a simple expression right away.

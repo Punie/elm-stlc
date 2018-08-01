@@ -1,10 +1,11 @@
 module Main exposing (..)
 
-import Platform
+import Platform exposing (Program)
 import Ports exposing (..)
 import Run exposing (run)
 
 
+main : Program Flags Model Msg
 main =
     Platform.worker
         { init = init
@@ -26,7 +27,7 @@ type alias Flags =
 
 
 init : Flags -> ( Model, Cmd Msg )
-init flags =
+init _ =
     ( (), Cmd.none )
 
 
@@ -38,9 +39,9 @@ update msg model =
                 result =
                     run str
             in
-                ( model, sendOutput result )
+                ( model, output result )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    onInput GotInput
+    interpret GotInput
