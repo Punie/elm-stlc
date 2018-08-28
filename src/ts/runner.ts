@@ -6,7 +6,7 @@ const { Elm } = require('./stlc');
 const stlc: App = Elm.Main.init();
 
 export function runExpr(argv: Arguments): void {
-  stlc.ports.output.subscribe(res => console.log(res));
+  stlc.ports.output.subscribe(console.log.bind(this));
 
   stlc.ports.interpret.send(argv.expr);
 }

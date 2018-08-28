@@ -1,4 +1,7 @@
-module Language.Eval exposing (..)
+module Language.Eval exposing
+    ( runEval
+    , toString
+    )
 
 import Dict exposing (Dict)
 import Language.Pretty exposing (prettyType)
@@ -53,7 +56,15 @@ eval env expr =
                 Nothing ->
                     Err ""
 
-        Prim op a b ->
+        PrimU op a ->
+            let
+                x =
+                    eval env a
+            in
+            Result.map (primUOp op) x
+                |> Utils.joinResults
+
+        PrimB op a b ->
             let
                 x =
                     eval env a
@@ -61,8 +72,8 @@ eval env expr =
                 y =
                     eval env b
             in
-                Result.map2 (primOp op) x y
-                    |> Utils.joinResults
+            Result.map2 (primOp op) x y
+                |> Utils.joinResults
 
         If p a b ->
             let
@@ -75,7 +86,7 @@ eval env expr =
                 y =
                     eval env b
             in
-                ifthenelse pred x y
+            ifthenelse pred x y
 
         Lam x _ body ->
             Ok <| VClosure x body env
@@ -88,8 +99,20 @@ eval env expr =
                 y =
                     eval env b
             in
-                Result.map2 apply x y
-                    |> Utils.joinResults
+            Result.map2 apply x y
+                |> Utils.joinResults
+
+
+primUOp : UnOp -> Value -> Evaluate Value
+primUOp op a =
+    case op of
+        Neg ->
+            case a of
+                VInt x ->
+                    Ok <| VInt (negate x)
+
+                _ ->
+                    Err ""
 
 
 primOp : BinOp -> Value -> Value -> Evaluate Value
@@ -99,6 +122,14 @@ primOp op a b =
             case ( a, b ) of
                 ( VInt x, VInt y ) ->
                     Ok <| VInt (x + y)
+
+                _ ->
+                    Err ""
+
+        Sub ->
+            case ( a, b ) of
+                ( VInt x, VInt y ) ->
+                    Ok <| VInt (x - y)
 
                 _ ->
                     Err ""

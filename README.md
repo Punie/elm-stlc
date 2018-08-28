@@ -1,5 +1,8 @@
 # Elm Simply Typed Lambda Calculus
 
+This is a simple implementation of a little Simply Typed Lambda Calculus.
+It is based of the wonderful (but unfortunately unfinished) book from Stephen Diehl : [Write You A Haskell](http://dev.stephendiehl.com/fun/).
+
 ## Build
 
 ```bash
@@ -10,21 +13,19 @@ $ npm install
 $ npm run build
 ```
 
-:warning: This project uses Elm 0.19. The `elm` binary included here is specific to MacOS. If you wish to compile this project on Windows or GNU/Linux, you will have to download the apropriate binary from [here](https://gist.github.com/evancz/8e89512dfa9f68903f05f1ac4c44861b#binaries).
-
 ## Usage
 
 Evaluate a simple expression right away.
 
 ```bash
-$ npm run --silent run "(\x : Int . x) 42"
+$ npm run --silent stlc eval "(\x : Int . x) 42"
 42 : Int
 ```
 
 Or fire up the repl altogether and start playing with the language.
 
 ```bash
-$ npm run --silent repl
+$ npm run --silent stlc repl
 λ> (\x : Int . x) 42
 42 : Int
 λ> .exit
@@ -38,6 +39,7 @@ There are only 3 types : Int, Bool, Function (->)
 Some basic operators are also implemented:
 
 - `+`
+- `-` (both prefix for negation and infix for substraction)
 - `*`
 - `&&`
 - `||`

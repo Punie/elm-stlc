@@ -1,7 +1,7 @@
 module Run exposing (run)
 
 import Language.Checker exposing (checkTop)
-import Language.Eval as Eval exposing (runEval)
+import Language.Eval exposing (runEval)
 import Language.Parser exposing (parseExpr)
 import Language.Pretty exposing (prettyExpr, prettyType)
 import Parser
@@ -24,4 +24,4 @@ run expr =
                             err
 
                         Ok result ->
-                            Eval.toString result ++ " : " ++ prettyType ty
+                            Language.Eval.toString result ++ " : " ++ prettyType ty

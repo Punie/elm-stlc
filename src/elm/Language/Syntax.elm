@@ -1,4 +1,11 @@
-module Language.Syntax exposing (..)
+module Language.Syntax exposing
+    ( BinOp(..)
+    , Expr(..)
+    , Ground(..)
+    , Name
+    , Type(..)
+    , UnOp(..)
+    )
 
 
 type alias Name =
@@ -8,14 +15,20 @@ type alias Name =
 type Expr
     = Var Name
     | Lit Ground
-    | Prim BinOp Expr Expr
+    | PrimU UnOp Expr
+    | PrimB BinOp Expr Expr
     | If Expr Expr Expr
     | App Expr Expr
     | Lam Name Type Expr
 
 
+type UnOp
+    = Neg
+
+
 type BinOp
     = Add
+    | Sub
     | Mul
     | And
     | Or

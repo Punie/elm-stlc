@@ -1,4 +1,7 @@
-module Language.Checker exposing (..)
+module Language.Checker exposing
+    ( checkTop
+    , toString
+    )
 
 import Language.Pretty exposing (prettyType)
 import Language.Syntax exposing (..)
@@ -55,8 +58,8 @@ lookupVar x =
                 Just e ->
                     RE.succeed e
     in
-        R.ask
-            |> R.andThen lookup
+    R.ask
+        |> R.andThen lookup
 
 
 checkEqualTypes : Expr -> Expr -> Type -> Check Type
@@ -65,12 +68,27 @@ checkEqualTypes e1 e2 resultType =
         equalTypes t1 t2 =
             if t1 == t2 then
                 RE.succeed resultType
+
             else
                 RE.fail (Mismatch t2 t1)
     in
-        RE.map equalTypes (check e1)
-            |> RE.andMap (check e2)
-            |> RE.join
+    RE.map equalTypes (check e1)
+        |> RE.andMap (check e2)
+        |> RE.join
+
+
+checkUnOpType : Expr -> Type -> Type -> Check Type
+checkUnOpType ex opType resultType =
+    let
+        unOpType t =
+            if t == opType then
+                RE.succeed resultType
+
+            else
+                RE.fail (Mismatch t opType)
+    in
+    RE.map unOpType (check ex)
+        |> RE.join
 
 
 checkBinOpTypes : Expr -> Expr -> Type -> Type -> Check Type
@@ -87,9 +105,9 @@ checkBinOpTypes e1 e2 opType resultType =
                 _ ->
                     RE.fail (Mismatch t1 opType)
     in
-        RE.map binOpTypes (check e1)
-            |> RE.andMap (check e2)
-            |> RE.join
+    RE.map binOpTypes (check e1)
+        |> RE.andMap (check e2)
+        |> RE.join
 
 
 check : Expr -> Check Type
@@ -104,12 +122,20 @@ check expr =
         Var x ->
             lookupVar x
 
-        Prim op e1 e2 ->
+        PrimU op ex ->
+            case op of
+                Neg ->
+                    checkUnOpType ex TInt TInt
+
+        PrimB op e1 e2 ->
             case op of
                 Eq ->
                     checkEqualTypes e1 e2 TBool
 
                 Add ->
+                    checkBinOpTypes e1 e2 TInt TInt
+
+                Sub ->
                     checkBinOpTypes e1 e2 TInt TInt
 
                 Mul ->
@@ -132,6 +158,7 @@ check expr =
                 equalTypes t1 t2 =
                     if t1 == t2 then
                         RE.succeed t1
+
                     else
                         RE.fail (Mismatch t2 t1)
 
@@ -145,8 +172,8 @@ check expr =
                         _ ->
                             RE.fail (Mismatch tp TBool)
             in
-                check p
-                    |> RE.andThen checkIfBool
+            check p
+                |> RE.andThen checkIfBool
 
         Lam x t exp ->
             inEnv ( x, t ) (check exp)
@@ -159,15 +186,16 @@ check expr =
                         TArr a b ->
                             if a == t2 then
                                 RE.succeed b
+
                             else
                                 RE.fail (Mismatch t2 a)
 
                         ty ->
                             RE.fail (NotFunction ty)
             in
-                RE.map checkIfFunction (check e2)
-                    |> RE.andMap (check e1)
-                    |> RE.join
+            RE.map checkIfFunction (check e2)
+                |> RE.andMap (check e1)
+                |> RE.join
 
 
 runCheck : Env -> Check a -> Result TypeError a

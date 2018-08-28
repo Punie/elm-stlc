@@ -6,10 +6,10 @@
   "license": "BSD-3-Clause",
   "scripts": {
     "stlc": "node ./dist/app.js",
-    "build": "tsc && ./elm make src/elm/Main.elm --output=dist/stlc.js --optimize",
-    "debug": "tsc && ./elm make src/elm/Main.elm --output=dist/stlc.js",
-    "build:elm": "./elm make src/elm/Main.elm --output=dist/stlc.js --optimize",
-    "debug:elm": "./elm make src/elm/Main.elm --output=dist/stlc.js",
+    "build": "npm run -s build:ts && npm run -s build:elm",
+    "debug": "npm run -s build:ts && npm run -s debug:elm",
+    "build:elm": "elm make src/elm/Main.elm --output=dist/stlc.js --optimize",
+    "debug:elm": "elm make src/elm/Main.elm --output=dist/stlc.js",
     "build:ts": "tsc"
   },
   "dependencies": {
@@ -18,6 +18,7 @@
   "devDependencies": {
     "@types/node": "^10.5.5",
     "@types/yargs": "^11.1.1",
+    "elm": "^0.19.0-bugfix2",
     "typescript": "^3.0.1"
   }
 }

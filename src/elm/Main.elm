@@ -1,4 +1,4 @@
-module Main exposing (..)
+module Main exposing (main)
 
 import Platform exposing (Program)
 import Ports exposing (..)
@@ -39,7 +39,7 @@ update msg model =
                 result =
                     run str
             in
-                ( model, output result )
+            ( model, output result )
 
 
 subscriptions : Model -> Sub Msg

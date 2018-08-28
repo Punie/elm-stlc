@@ -1,4 +1,7 @@
-module Language.Pretty exposing (..)
+module Language.Pretty exposing
+    ( prettyExpr
+    , prettyType
+    )
 
 import Language.Syntax exposing (..)
 import StructuredWriter as PP exposing (Writer)
@@ -27,6 +30,7 @@ parensIf : Bool -> Writer -> Writer
 parensIf b =
     if b then
         parens
+
     else
         identity
 
@@ -54,7 +58,7 @@ prettyExpr_ p expr =
                 x =
                     prettyExpr_ p val
             in
-                PP.spaced [ f, x ]
+            PP.spaced [ f, x ]
 
         Lam name type_ body ->
             parensIf (p > 0) <|
@@ -88,8 +92,8 @@ prettyType_ p type_ =
                         _ ->
                             False
             in
-                PP.spaced
-                    [ parensIf (isArrow a) (prettyType_ p a)
-                    , PP.string "->"
-                    , prettyType_ p b
-                    ]
+            PP.spaced
+                [ parensIf (isArrow a) (prettyType_ p a)
+                , PP.string "->"
+                , prettyType_ p b
+                ]

@@ -1,4 +1,3 @@
-import { EventEmitter } from 'events';
 import * as yargs from 'yargs';
 import { Argv } from 'yargs';
 
@@ -7,7 +6,7 @@ import { runExpr } from './runner';
 
 
 yargs
-  .command('run <expr>', 'run expression through the interpreter', (yargs: Argv) =>
+  .command('eval <expr>', 'run expression through the interpreter', (yargs: Argv) =>
     yargs
       .positional('expr', {
         describe: 'expression to be run',

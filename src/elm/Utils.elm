@@ -1,4 +1,8 @@
-module Utils exposing (flip, lookup, joinResults)
+module Utils exposing
+    ( flip
+    , joinResults
+    , lookup
+    )
 
 
 flip : (a -> b -> c) -> b -> a -> c
@@ -15,6 +19,7 @@ lookup key list =
         ( k, v ) :: xs ->
             if k == key then
                 Just v
+
             else
                 lookup key xs
 
