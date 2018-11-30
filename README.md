@@ -54,7 +54,7 @@ And the `if ... then ... else ...` expressions.
 Lambda for function application and its arguments:
 
 ```
-(\f : Int -> Int . \x : Int . f x) (\n : Int -> 10 * n) 5
+(\f : Int -> Int . \x : Int . f x) (\n : Int . 10 * n) 5
 ```
 
 This would be the `not` function:
@@ -66,5 +66,5 @@ This would be the `not` function:
 Less than or equal:
 
 ```
-(\n : Int -> if n < 3 || n == 3 then True else False)
+(\n : Int . \m : Int . n < m || n == m)
 ```
