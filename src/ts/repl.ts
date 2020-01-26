@@ -13,7 +13,7 @@ export function runRepl() {
     emitter.emit('interpreted', res);
   });
 
-  function evalStlc (cmd: string, context: Object, filename: string, callback: (a: Object | null, result?: string) => void) {
+  function evalStlc (cmd: string, context: Object, filename: string, callback: (a: Error | null, result?: string) => void) {
     if (cmd === '\n') {
       return callback(null);
     }

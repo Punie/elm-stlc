@@ -8,5 +8,5 @@ const stlc: App = Elm.Main.init();
 export function runExpr(argv: Arguments): void {
   stlc.ports.output.subscribe(console.log.bind(this));
 
-  stlc.ports.interpret.send(argv.expr);
+  stlc.ports.interpret.send(argv.expr as string);
 }
